@@ -74,23 +74,44 @@ app.get("/", (req, res) => {
 
 // Handle user login.
 app.post("/login", (req, res) => {
-  // TODO: Get the username and password from form data
-  // TODO: Attempt to retrieve the user from the database
-  // TODO: If the user exists, check if the password matches the user's password
-  // TODO: Log the user in by storing their username in the session
-  // TODO: Display a success message and redirect to /login/success
-  // TODO: If the user doesn't exist or the password doesn't match, display an error
+  // Get the username and password from form data
+  const { username, password } = req.body;
+  console.log(`username: ${username}, password: ${password}`)
+  // Attempt to retrieve the user from the database
+  const user = db[username];
+  // If the user exists, check if the password matches the user's password
+  if (user?.password === password) {
+  // Log the user in by storing their username in the session
+  req.session.username = username
+  // Display a success message and redirect to /login/success
+  res.session.success = "Logged in successfully!";
+  res.redirect("/login/success");
+  } else {
+  // If the user doesn't exist or the password doesn't match, display an error
   //       message and redirect to the homepage
+  req.session.error = 
+  "Authenication failed, please check your username and password.";
+  res.redirect("/");
+  }
 });
 
 // Handle user registration.
 app.post("/register", (req, res) => {
-  // TODO: Get the username and password from form data
-  // TODO: Check if username already exists in the database
-  // TODO: If it doesn't, create a new user and store it in the database
-  // TODO: Display a success message to the user
-  // TODO: If the user already exists, display an error message
-  // TODO: Either way, redirect to the homepage so they can log in
+  // Get the username and password from form data
+  const { username, password } = req.body;
+  // Check if username already exists in the database
+  if (!db[username]) {
+  // If it doesn't, create a new user and store it in the database
+  db[username] = { username, password };
+  // Display a success message to the user
+  req.session.username = "Registration successful! You can now log in.";
+  } else {
+  // If the user already exists, display an error message
+  req.session.error = 
+  "An account already exists with that username. Try logging in.";
+  }
+  // Either way, redirect to the homepage so they can log in
+  res.redirect("/");
 });
 
 // A restricted route that can only be accessed if the user is logged in.
