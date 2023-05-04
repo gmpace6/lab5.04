@@ -84,7 +84,7 @@ app.post("/login", (req, res) => {
   // Log the user in by storing their username in the session
   req.session.username = username
   // Display a success message and redirect to /login/success
-  res.session.success = "Logged in successfully!";
+  req.session.success = "Logged in successfully!";
   res.redirect("/login/success");
   } else {
   // If the user doesn't exist or the password doesn't match, display an error
